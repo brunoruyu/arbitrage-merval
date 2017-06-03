@@ -13,7 +13,7 @@ Created on Sun May 14 15:56:34 2017
 """
 import numpy as np
 import pandas as pd
-    
+
 
 #file_handle = open('datos_test.dat', 'r')
 # Read in all the lines of your file into a list of lines
@@ -21,7 +21,7 @@ import pandas as pd
 #read = [[float(val) for val in line.split()] for line in lines_list[0:]]
 #df=pd.DataFrame(read,columns=["inst","time","bid","ask"])
 
-def ajustadf(df,ID1,ID2):
+def ajustadf(df,ID1,ID2,tinic,tfin):
     df1=df.dropna(axis=0)
     new1 = df1[df1['idSigla'] == ID1]
     new2 = df1[df1['idSigla'] == ID2]    
@@ -29,9 +29,10 @@ def ajustadf(df,ID1,ID2):
     new2=new2.drop_duplicates(subset="TimeStamp",keep="last")    
     df1=pd.concat([new1,new2])
     df1["prom"]=(df1.bid+df1.offer)/2
-    dfp = df1.pivot(index='TimeStamp', columns='idSigla', values='prom')
-    dff=dfp.fillna(method='pad')
+    dff = df1.pivot(index='TimeStamp', columns='idSigla', values='prom')
+    dff=dff.fillna(method='pad')
     dff=dff.dropna(axis=0)
+    dff=dff[tinic:tfin]
 #    print(dff)
     return dff
 
@@ -44,11 +45,11 @@ def ReadExcel(archivo,ID1,ID2):
     return dff
     #print(dff)
 
-def ReadCsv(archivo,ID1,ID2):
+def ReadCsv(archivo,ID1,ID2,tinic,tfin):
     cols=["idSigla","TimeStamp","bid","offer"]  
     df=pd.read_csv(archivo,index_col=None,sep="\t",usecols=cols,decimal=","
                    ,parse_dates=True)
 
-    dff=ajustadf(df,ID1,ID2)
+    dff=ajustadf(df,ID1,ID2,tinic,tfin)
     return dff
 
