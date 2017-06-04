@@ -22,27 +22,38 @@ import pandas as pd
 #df=pd.DataFrame(read,columns=["inst","time","bid","ask"])
 
 def ajustadf(df,ID1,ID2,tinic,tfin):
-    df1=df.dropna(axis=0)
-    new1 = df1[df1['idSigla'] == ID1]
-    new2 = df1[df1['idSigla'] == ID2]    
+    df=df.dropna(axis=0)
+    new1 = df[df['idSigla'] == ID1]
+    new2 = df[df['idSigla'] == ID2]    
     new1=new1.drop_duplicates(subset="TimeStamp",keep="last")
     new2=new2.drop_duplicates(subset="TimeStamp",keep="last")    
     df1=pd.concat([new1,new2])
     df1["prom"]=(df1.bid+df1.offer)/2
-    dff = df1.pivot(index='TimeStamp', columns='idSigla', values='prom')
+
+    dff=pivotear(df1,'prom',tinic,tfin)
+    dff["dif"]=dff['Act2']-dff['Act1']
+
+    bid=pivotear(df1,'bid',tinic,tfin)
+    ask=pivotear(df1,'offer',tinic,tfin)
+    #df["cociente"]=df[ID1]/df[ID2]
+    return (dff,bid,ask)
+
+def pivotear(df,text,tinic,tfin):
+    dff = df.pivot(index='TimeStamp', columns='idSigla', values=text)
     dff=dff.fillna(method='pad')
     dff=dff.dropna(axis=0)
     dff=dff[tinic:tfin]
-#    print(dff)
+    dff.columns=[['Act1','Act2']]
     return dff
-
+    
+    
 def ReadExcel(archivo,ID1,ID2):
     cols=["idSigla","TimeStamp","bid","offer"]
     df=pd.read_excel(archivo,sheetname="Hoja1",index_col=None,
                      usecols=cols)
    # print(df)
-    dff=ajustadf(df,ID1,ID2)
-    return dff
+    (dff,bid,ask)=ajustadf(df,ID1,ID2,tinic,tfin)
+    return (dff,bid,ask)
     #print(dff)
 
 def ReadCsv(archivo,ID1,ID2,tinic,tfin):
@@ -50,6 +61,6 @@ def ReadCsv(archivo,ID1,ID2,tinic,tfin):
     df=pd.read_csv(archivo,index_col=None,sep="\t",usecols=cols,decimal=","
                    ,parse_dates=True)
 
-    dff=ajustadf(df,ID1,ID2,tinic,tfin)
-    return dff
+    (dff,bid,ask)=ajustadf(df,ID1,ID2,tinic,tfin)
+    return (dff,bid,ask)
 
