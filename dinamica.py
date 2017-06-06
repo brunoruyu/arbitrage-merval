@@ -8,16 +8,20 @@ import numpy as np
 import pandas as pd
 
 fixc=3.0 #0.19*16.5
-prop=0.001
+prop=0.005
 
-def buy(Act,C,M,price,n):
+def buy(Act,C,M,price,n,i):
+    #print('  antes buy',M,price,Act)
     C[Act]=C[Act]+n
     cost=fixc+prop*price*n
     M=M-n*price-cost    
+    #print('  dps buy',M,Act)
     return (C,M)
     
-def sell(Act,C,M,price,n):
+def sell(Act,C,M,price,n,i):
+    #print('  antes sell',M,price,Act)
     C[Act]=C[Act]-n
     cost=fixc+prop*price*n
     M=M+n*price-cost    
+    #print('  dps sell',M,Act)
     return (C,M)   
