@@ -55,10 +55,11 @@ for mult in expMult:
         for i in range(1,len(opdif)):
             Mvect[i]=Mvect[i-1]
             if (opdif[i]-mu>mult*sigma and opdif[i-1]-mu<=mult*sigma
-                and opask[i,0]-opbid[i,0]<spd and PosAbierta==False): #Act1 muy caro
+                and (opask[i,0]-opbid[i,0])<spd and PosAbierta==False): #Act1 muy caro
                 C,M=dinamica.buy(0,C,M,opask[i,0],n,i) #Compro el Act0=0 barato
                 C,M=dinamica.sell(1,C,M,opbid[i,1],n,i) #Vendo el Act1=1 caro
                 PosAbierta=True
+                
             elif (opdif[i]-mu<0 and opdif[i-1]-mu>=0
                   and PosAbierta==True): 
                 C,M=dinamica.sell(0,C,M,opbid[i,0],n,i) #Cierro la posic Act=0

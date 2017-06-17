@@ -29,8 +29,10 @@ def ajustadf(df,ID0,ID1,tinic,tfin):
     new1=new1.drop_duplicates(subset="TimeStamp",keep="last")    
     df1=pd.concat([new0,new1])
     df1["prom"]=(df1.bid+df1.offer)/2
+    df1["spread"]=(df1.offer-df1.bid)
 
-    dff=pivotear(df1,'prom',tinic,tfin)
+    df2=df1#[df1["spread"]>0]
+    dff=pivotear(df2,'prom',tinic,tfin)
     dff["dif"]=dff['Act1']-dff['Act0']
 
     bid=pivotear(df1,'bid',tinic,tfin)
