@@ -9,6 +9,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import ReadData
 import dinamica
+import pandas as pd
 
 ID0,ID1=39,69   
 tinic,tfin="2016-10-03 12:09:46","2016-12-29 17:05:51"
@@ -26,7 +27,7 @@ ndif=np.array(dif)
 nbid=np.array(bid)
 nask=np.array(ask)
 
-traintime=int(len(ndif)/3.0)
+traintime=int(len(ndif)/3)
 traindif=ndif[0:traintime].copy()
 #df.index=range(len(df))
 
@@ -36,7 +37,7 @@ opask=nask[traintime:].copy() #Act0 Act1
 
 #plt.plot(opdif)
 
-expMult=[1]
+expMult=[2]
 expN=[1]
 
 mu,sigma=traindif.mean(),traindif.std()
@@ -54,7 +55,7 @@ for mult in expMult:
         for i in range(1,len(opdif)):
             Mvect[i]=Mvect[i-1]
             if (opdif[i]-mu>mult*sigma and opdif[i-1]-mu<=mult*sigma
-                and (opask[i,0]-opbid[i,0]<spd) ): #Act1 muy caro
+                and opask[i,0]-opbid[i,0]<spd and PosAbierta==False): #Act1 muy caro
                 C,M=dinamica.buy(0,C,M,opask[i,0],n,i) #Compro el Act0=0 barato
                 C,M=dinamica.sell(1,C,M,opbid[i,1],n,i) #Vendo el Act1=1 caro
                 PosAbierta=True
@@ -67,7 +68,7 @@ for mult in expMult:
                 cont=cont+1 
                 PosAbierta=False
             elif (opdif[i]-mu<-mult*sigma and opdif[i-1]-mu>=-mult*sigma
-                  and (opask[i,1]-opbid[i,1]<spd)):#Act0 muy caro
+                  and opask[i,1]-opbid[i,1]<spd and PosAbierta==False):#Act0 muy caro
                 C,M=dinamica.buy(1,C,M,opask[i,1],n,i)
                 C,M=dinamica.sell(0,C,M,opbid[i,0],n,i)    
                 PosAbierta=True
@@ -104,12 +105,15 @@ result.to_csv('resultados.dat',sep='\t')
 #pd.rolling_corr(df[ID1], df[ID2], window=10000).plot(style='-g')
 #print("COCIENTE: mean std ",df["cociente"].mean(),df["cociente"].std())
 #print(len(df))
+"""
 fig, ax1=plt.subplots()
 plt.plot(Mvect)
 plt.plot(opdif,"r")
 ax2=ax1.twinx()
 plt.plot(opbid,"g")
 plt.plot(opask,"y")
+"""
+
 #Determino el valor medio y la std en la mitad de los datos
 
 """

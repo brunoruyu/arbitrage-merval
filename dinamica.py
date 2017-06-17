@@ -7,8 +7,8 @@ Created on Sat Jun  3 19:55:06 2017
 import numpy as np
 import pandas as pd
 
-fixc=3.0 #0.19*16.5
-prop=0.005
+fixc=1.32 #0.08*16.5
+prop=0.001
 
 def buy(Act,C,M,price,n,i):
     #print('  antes buy',M,price,Act)
